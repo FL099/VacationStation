@@ -1,0 +1,150 @@
+package com.example.vacationstation.ui.Map;
+
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.vacationstation.MapViewPinExample;
+import com.example.vacationstation.PermissionsRequestor;
+import com.here.sdk.core.GeoCoordinates;
+//import com.here.sdk.core.OnEngineInitListener;
+//import com.here.sdk.core.mapping.Map;
+//import com.here.sdk.core.MapFragment;
+import com.here.sdk.mapview.MapScheme;
+import com.here.sdk.mapview.MapView;
+
+import com.example.vacationstation.R;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link MapFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class MapFragment extends Fragment {
+
+    private static final String TAG = MapFragment.class.getSimpleName();
+
+    private PermissionsRequestor permissionsRequestor;
+    private MapView mapView;
+    private MapViewPinExample mapViewPinExample;
+
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    public MapFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment MapFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static MapFragment newInstance(String param1, String param2) {
+        MapFragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        // Get a MapView instance from layout.
+        mapView = (MapView ) view.findViewById(R.id.map_view);  //R.id.map_view
+        mapView.onCreate(savedInstanceState);
+
+        handleAndroidPermissions();
+
+        return view;
+    }
+
+    private void handleAndroidPermissions() {
+        permissionsRequestor = new PermissionsRequestor(getActivity() );
+        permissionsRequestor.request(new PermissionsRequestor.ResultListener(){
+
+            @Override
+            public void permissionsGranted() {
+                loadMapScene();
+
+            }
+
+            @Override
+            public void permissionsDenied() {
+                Log.e(TAG, "Permissions denied by user.");
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsRequestor.onRequestPermissionsResult(requestCode, grantResults);
+    }
+
+    private void loadMapScene() {
+        // Load a scene from the SDK to render the map with a map style.
+        mapView.getMapScene().loadScene(MapScheme.NORMAL_DAY, mapError -> {
+            if (mapError == null) {
+                mapViewPinExample = new MapViewPinExample( getActivity(), mapView);
+                mapViewPinExample.showAnchoredMapViewPin();
+            } else {
+                Log.d(TAG, "Loading map scene failed: " + mapError.toString());
+            }
+        });
+    }
+
+    public void defaultButtonClicked(View view) {
+        mapViewPinExample.showMapViewPin();
+    }
+
+    public void anchoredButtonClicked(View view) {
+        mapViewPinExample.showAnchoredMapViewPin();
+    }
+
+    public void clearMapButtonClicked(View view) {
+        mapViewPinExample.clearMap();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+}
