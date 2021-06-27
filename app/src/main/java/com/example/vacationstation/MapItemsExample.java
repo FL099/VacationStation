@@ -69,7 +69,7 @@ public class MapItemsExample {
         // Setting a tap handler to pick markers from map.
         setTapGestureHandler();
 
-        Toast.makeText(context, "You can tap 2D markers.", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "You can tilt the map with two fingers ", Toast.LENGTH_LONG).show();
     }
 
     public void showAnchoredMapMarkers() {
@@ -77,7 +77,7 @@ public class MapItemsExample {
 
         for (int i = 0; i < 10; i++) {
             //TODO ändern
-            GeoCoordinates geoCoordinates = new GeoCoordinates(48.190798, 16.400408); //createRandomGeoCoordinatesAroundMapCenter();
+            GeoCoordinates geoCoordinates = new GeoCoordinates(48.090798, 16.400408); //createRandomGeoCoordinatesAroundMapCenter();
 
             // Centered on location. Shown below the POI image to indicate the location.
             // The draw order is determined from what is first added to the map.
@@ -321,6 +321,7 @@ public class MapItemsExample {
                     return;
                 }
 
+                //TODO: so ändern, dass evtl das Foto groß angezeigt wird
                 showDialog("Map marker picked:", "Location: " +
                         topmostMapMarker.getCoordinates().latitude + ", " +
                         topmostMapMarker.getCoordinates().longitude);
